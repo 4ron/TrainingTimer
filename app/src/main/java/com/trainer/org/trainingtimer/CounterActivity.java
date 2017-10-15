@@ -1,8 +1,9 @@
 package com.trainer.org.trainingtimer;
 
-import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -13,14 +14,15 @@ import android.widget.TextView;
 
 public class CounterActivity extends AppCompatActivity {
 
-    CountDownTimer timer;
+    CountDownTimer workTimer;
+    CountDownTimer restTimer;
     TextView statusText;
     TextView countdown;
+    ConstraintLayout cLayout;
+    int reps;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_counter);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -36,32 +38,68 @@ public class CounterActivity extends AppCompatActivity {
         });
 
         // the UI elements
-        statusText = (TextView) findViewById(R.id.textView2);
-        countdown = (TextView) findViewById(R.id.textView3);
+        statusText = (TextView) findViewById(R.id.motivText);
+        countdown = (TextView) findViewById(R.id.countdownText);
+        cLayout = (ConstraintLayout) findViewById(R.id.counter_content_layout_id);
 
-        // Get the intent that started this activity and extract the string
-        Intent intent = getIntent();
-        String period = intent.getStringExtra(MainActivity.TRAINER_PERIOD);
+        // Get the intent that started this activity and extract the data
+        String workSec = getIntent().getStringExtra(MainActivity.WORK_PERIOD);
+        String restSec = getIntent().getStringExtra(MainActivity.REST_PERIOD);
+        String repetitions = getIntent().getStringExtra(MainActivity.REPETITIONS);
 
-        // start the timer
-        setupCountDownTimer(Integer.parseInt(period)*1000, 1000);
-        statusText.setText("Work!");
-        timer.start();
+        // handle empty string cases etc.
+        // todo
+
+        // setup timers and trigger the loop
+        workTimer = setupWorkTimer(Integer.parseInt(workSec)*1000, 1000);
+        restTimer = setupRestTimer(Integer.parseInt(restSec)*1000, 1000);
+        reps = Integer.parseInt(repetitions);
+        resumeCountDownLoop();
     }
 
-    private void setupCountDownTimer(long millisInFuture, long countDownInterval) {
-        timer = new CountDownTimer(millisInFuture, countDownInterval) {
+    public void resumeCountDownLoop() {
+        if (reps > 0) {
+            reps--;
+            cLayout.setBackgroundColor(Color.parseColor("green"));
+            workTimer.start();
+        } else {
+            statusText.setText("Done!");
+        }
+    }
+
+    private CountDownTimer setupWorkTimer(long millisInFuture, long countDownInterval) {
+        return new CountDownTimer(millisInFuture, countDownInterval) {
             @Override
             public void onTick(long millisUntilFinished) {
-                Log.d("app", "timer > onTick()");
+                Log.d("app", "workTimer > onTick()");
+                statusText.setText("Work!");
                 countdown.setText("" + (millisUntilFinished / 1000 + 1));
             }
 
             @Override
             public void onFinish() {
-                Log.d("app", "timer > onFinish()");
+                Log.d("app", "workTimer > onFinish()");
                 countdown.setText(0 + "");
-                statusText.setText("DONE!");
+                cLayout.setBackgroundColor(Color.parseColor("blue"));
+                restTimer.start();
+            }
+        };
+    }
+
+    private CountDownTimer setupRestTimer(long millisInFuture, long countDownInterval) {
+        return new CountDownTimer(millisInFuture, countDownInterval) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                Log.d("app", "restTimer > onTick()");
+                statusText.setText("Rest...");
+                countdown.setText("" + (millisUntilFinished / 1000 + 1));
+            }
+
+            @Override
+            public void onFinish() {
+                Log.d("app", "restTimer > onFinish()");
+                countdown.setText(0 + "");
+                resumeCountDownLoop();
             }
         };
     }

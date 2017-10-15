@@ -13,7 +13,13 @@ import android.widget.EditText;
 
 public class MainActivity extends AppCompatActivity {
 
-    public static final String TRAINER_PERIOD = "TrainerPeriod";
+    public static final String WORK_PERIOD = "TrainerPeriod";
+    public static final String REST_PERIOD = "RestPeriod";
+    public static final String REPETITIONS = "Repetitions";
+
+    EditText workInput;
+    EditText restInput;
+    EditText repsInput;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +36,10 @@ public class MainActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
+
+        workInput = (EditText) findViewById(R.id.workInput);
+        restInput = (EditText) findViewById(R.id.restInput);
+        repsInput = (EditText) findViewById(R.id.repsInput);
     }
 
     @Override
@@ -57,9 +67,15 @@ public class MainActivity extends AppCompatActivity {
     // This method is attached to a button in content_main.xml
     public void startCounter(View view) {
         Intent intent = new Intent(this, CounterActivity.class);
-        EditText editText = (EditText) findViewById(R.id.editText);
-        String message = editText.getText().toString();
-        intent.putExtra(TRAINER_PERIOD, message);
+
+        String workSec = workInput.getText().toString();
+        String restSec = restInput.getText().toString();
+        String reps = repsInput.getText().toString();
+
+        intent.putExtra(WORK_PERIOD, workSec);
+        intent.putExtra(REST_PERIOD, restSec);
+        intent.putExtra(REPETITIONS, reps);
+
         startActivity(intent);
     }
 

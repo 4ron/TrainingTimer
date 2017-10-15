@@ -7,10 +7,11 @@
     android:background="@android:color/holo_blue_bright"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.trainer.org.trainingtimer.CounterActivity"
-    tools:showIn="@layout/activity_counter">
+    tools:showIn="@layout/activity_counter"
+    android:id="@+id/counter_content_layout_id">
 
     <TextView
-        android:id="@+id/textView2"
+        android:id="@+id/motivText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
@@ -23,7 +24,7 @@
         tools:layout_constraintTop_creator="1" />
 
     <TextView
-        android:id="@+id/textView3"
+        android:id="@+id/countdownText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="213dp"
